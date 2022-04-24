@@ -1,0 +1,21 @@
+04/24/22
+Referrals work now.
+
+
+04/23/22
+Travelling now goes by istance between two points (x, y) instead of the difference betwee house numbers
+No longer hiding trust and maxTrust in house until the player interacts with the NPC.
+
+
+04/21/22
+  There's now a back button from person to house intead of map.
+  Color code buttons to make it a little more intuitive
+
+
+04/20/22
+  Neg biases are potentially 2x as powerful as pos biases.
+  Fixed a discrepancy between bias netrual check and and bias pos/checks.
+  Alphabetized bias button list in dialogue options. Thanks P35 and qnp from https://discord.gg/8AWnmGq7S7
+  Removed HTML code outside of the UI addClass
+  Made it to where the day can end and what happens when a day secondPerson
+  Add asks to universal dialogueOptions
