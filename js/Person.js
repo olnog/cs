@@ -544,7 +544,7 @@ class Person{
     }
     let identityStatus = "."
     if (this.identity.includes(relevantBias) && !this.you.knownIdentity.includes(relevantBias)){
-      identityStatus = ", and they reveal that they are also " + game.biasCaptions.identity[relevantBias] + "."
+      identityStatus = ", and they reveal that they are " + game.biasCaptions.identity[relevantBias] + "."
       this.you.knownIdentity.push(relevantBias)
     }
     ui.status(status + identityStatus)

@@ -15,10 +15,14 @@ class UI {
 
 
   displayAskButtons(personID){
+    let disabledClass = ""
     let html = ''
     for (let i in game.asks){
+      if (persons[personID].trust < game.askCost[game.asks[i]]){
+        disabledClass = ' disabled '
+      }
       html += "<button id='interact-" + game.asks[i]
-          + "-0-0-" + personID + "' class='m-3 interact btn btn-info'>"
+          + "-0-0-" + personID + "' class='m-3 interact btn btn-info " + disabledClass + "'>"
           + this.captionArr[game.asks[i]] + "</button>"
     }
     return html
@@ -196,14 +200,18 @@ class UI {
     let html = ""
     for (let i in characterization ){
       html += "<div>"
-      let confirmBias = "<button class='btn btn-outline-info' disabled>&#10003;</button>"
+      let confirmBias = ""
+      let unsure = ""
+      let confirmedBoldClass =' fw-bold '
       if (!persons[personID].you.knownIdentity.includes(characterization[i])){
+        confirmedBoldClass = ''
+        unsure = "?"
         confirmBias = this.displayBiasButton(characterization[i], 'neutral', personID, '?', false)
           + this.displayBiasButton(characterization[i], 'bad', personID, '&#128078;', true)
           + this.displayBiasButton(characterization[i], 'good', personID, '&#128077;', true)
       }
-      html += confirmBias + "<span class='ms-3'>"
-      + game.biasCaptions.identity[characterization[i]] + "?"
+      html += confirmBias + "<span class='ms-3 " + confirmedBoldClass  + "'>"
+      + game.biasCaptions.identity[characterization[i]] + unsure
       + "</span>"
       + "</div>"
     }
@@ -226,6 +234,7 @@ class UI {
     $('.interact').prop('disabled', false)
     if (persons[personID].you.trust == 0){
       $('.interact').prop('disabled', true)
+        $('.personStory').prop('disabled', true)
     }
     let knownBiases = persons[personID].fetchKnownBiases()
     let biasedArr = {good: "biased in favor:", bad: 'biased against: '}
