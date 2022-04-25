@@ -88,24 +88,25 @@ class Person{
     }
     this.day()
   }
+  createLie(biasName){
+    this.you.lies.truth.push(biasName)
+    let lying = true
+    while(lying){
+      let demoCategory = game.demographics[this.findDemographic(biasName)]
+      let possibleLie = demoCategory[Math.round(Math.random()
+        * ((demoCategory.length-1) - 0) + 0)]
+      if (possibleLie != biasName){
+        this.you.lies.lie.push(possibleLie)
+        lying = false
+      }
+    }
+  }
+
   createLies(){
     for (let i in this.identity){
       let where = this.findDemographic(this.identity[i])
       if (Math.round(Math.random() * (3 - 1) + 1) == 1){
-        this.you.lies.truth.push(this.identity[i])
-        let lying = true
-        while(lying){
-          let demoCategory = game.demographics[this.findDemographic(this.identity[i])]
-          let possibleLie = demoCategory[Math.round(Math.random()
-            * ((demoCategory.length-1) - 0) + 0)]
-
-          if (possibleLie != this.identity[i]){
-            this.you.lies.lie.push(possibleLie)
-            lying = false
-          }
-
-        }
-
+        this.createLie(this.identity[i])
       }
     }
   }
@@ -546,6 +547,11 @@ class Person{
     if (this.identity.includes(relevantBias) && !this.you.knownIdentity.includes(relevantBias)){
       identityStatus = ", and they reveal that they are " + game.biasCaptions.identity[relevantBias] + "."
       this.you.knownIdentity.push(relevantBias)
+    }
+    if (this.you.lies.lie.includes(relevantBias) && currentOrient != 0){
+      this.you.lies.truth.splice(this.you.lies.lie.indexOf(relevantBias), 1)
+      this.you.lies.lie.splice(this.you.lies.lie.indexOf(relevantBias), 1)
+      this.createLie(relevantBias)
     }
     ui.status(status + identityStatus)
   }
