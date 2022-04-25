@@ -395,6 +395,10 @@ class Person{
     return processedBiases
   }
 
+  fetchName(){
+    return this.name + " " + this.surname
+  }
+
   fetchRandBias(){
     let fetching = true
     let randBias = null
@@ -488,7 +492,7 @@ class Person{
       status = " they are coming to your service this Sunday."
       game.addLog(this.name +  " " + this.surname + " is now coming to Service this Sunday.")
       this.you.comingToService = true
-      game.social.comingToService.push(this.name)
+      game.church.attending.push(this.id)
     } else if (interactionType == 'askRefer'){
       status = this.refer()
     } else if (interactionType == 'askDonation'){

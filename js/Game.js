@@ -59,6 +59,12 @@ class Game{
       wheelchair: 'people confined to a wheelchair', blind: 'the visually impaired', deaf: 'the hearing impaired', amputee: 'amputees'
     }
   }
+  church = {
+    attending: [],
+    maxAttending: 10,
+    songs: [],
+  }
+  days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
   dayNum = 1
   demographics = {
     lgbtq:       ['straight', 'gay', 'trans', 'bisexual', 'asexual', 'nonbinary'],
@@ -72,7 +78,6 @@ class Game{
     substance: ['smoker', 'addiction', 'alcohol'],
     disability: ['wheelchair', 'blind', 'deaf', 'amputee'],
   }
-  comingToService = []
   currentlyAt = null
   groups = { }
   houses = {
@@ -92,17 +97,14 @@ class Game{
   money = 0
   numOfGroups = 10
   optionalBiases = ['psych', 'substance', 'disability', 'citizenship']
-  social = {
-    comingToService: []
-  }
-  songs = []
+
   time = 8
   yourIdentity = []
 
 
 
   constructor(){
-    this.songs.push(song.random())
+    this.church.songs.push(song.random())
     for (let i = 1; i < this.numOfGroups + 1; i++){
       this.groups[i] = []
     }
@@ -165,6 +167,7 @@ class Game{
     }
     ui.status(status + homeStatus)
     ui.displayMap()
+
   }
 
 
@@ -266,6 +269,8 @@ class Game{
     }
     game.addLog(logMsg)
   }
+
+
   loseTime(timeSpent){
     this.time = this.time - timeSpent
     if (this.time <= 0){
@@ -273,4 +278,15 @@ class Game{
     }
   }
 
+  startService(){
+    
+  }
+
+  whichDay(){
+    let whichDay = (game.dayNum % 7) - 1
+    if (whichDay == -1){
+      whichDay = 6
+    }
+    return whichDay
+  }
 }

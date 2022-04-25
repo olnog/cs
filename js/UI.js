@@ -35,6 +35,19 @@ class UI {
   }
 
   displayChurch(){
+    $(".screens").addClass('d-none')
+    $("#church").removeClass('d-none')
+    $("#skip").addClass('d-none')
+    $("#numOfAttending").html(game.church.attending.length)
+    $("#maxAttending").html(game.church.maxAttending)
+    let html = ""
+    for (let i in game.church.attending){
+      html += "<div>" + persons[game.church.attending[i]].fetchName() + "</div>"
+    }
+    $("#congregation").html(html)
+  }
+
+  displayChurchAttendees(){
     $("#comingToChurch").addClass('d-none')
     console.log(game.social.comingToService)
     if (game.social.comingToService.length > 0){
@@ -283,9 +296,11 @@ class UI {
     $("#time").html((game.time).toLocaleString())
     $("#money").html(game.money)
     $("#dayNum").html(game.dayNum)
-    //console.log(game.houses.visited)
     this.displayLog()
-
+    $("#dayOfTheWeek").html(game.days[game.whichDay()])
+    if (game.whichDay() == 6){
+      ui.displayChurch()
+    }
   }
 
 

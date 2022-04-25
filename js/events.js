@@ -106,6 +106,17 @@ $(document).on('click', '#showLog', function(e){
   $("#log").removeClass('d-none')
 })
 
+$(document).on('click', '#skipDay', function(e){
+  game.day()
+})
+
+$(document).on('click', '#skipSunday', function(e){
+  let howManyDays = 6 - game.whichDay()
+  for (let i = 0; i < howManyDays; i++){
+    game.day()
+  }
+
+})
 $(document).on('click', '#start', function(e){
   game.start()
   $("#identityTest").addClass('d-none')

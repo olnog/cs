@@ -17,6 +17,9 @@ for (let houseNum = 1; houseNum < 101; houseNum++){
     persons.push(new Person(houseNum))
     door2doorBias += persons[persons.length-1].biases.door2door
     persons[persons.length-1].id = persons.length-1
+    if (game.church.attending.length < game.church.maxAttending){
+      game.church.attending.push(persons.length-1)
+    }
   }
   let houseX = Math.abs((houseNum % game.maxX))
   if (houseX == 0){
