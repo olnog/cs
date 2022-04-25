@@ -197,8 +197,8 @@ class UI {
 
     $(".personCharacterization").html(html)
     html = ""
-    html = persons[personID].name + " " + persons[personID].surname + " ("
-      + persons[personID].you.trust + "/" + persons[personID].you.maxTrust + ")"
+    html = persons[personID].name + " " + persons[personID].surname + " <span id='personTrust'>("
+      + persons[personID].you.trust + "/" + persons[personID].you.maxTrust + ")</span>"
     $(".personAbout").html(html)
     html = ""
     if (!persons[personID].you.knowStory){
@@ -223,7 +223,6 @@ class UI {
       }
 
       for (let i in knownBiases[goodOrBad]){
-        console.log(i)
         html += "<div class='ms-3'>" + knownBiases[goodOrBad][i] + "</div>"
       }
     }
@@ -291,6 +290,7 @@ class UI {
 
 
   status(msg){
+
     $("#status").html(msg)
     $("#status").addClass('fw-bold')
     setTimeout(function(){

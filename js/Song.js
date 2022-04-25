@@ -22,7 +22,6 @@ class Song{
     let text = ""
     for (let i in arr[which]){
       let randChance = Math.round(Math.random() * 1)
-      console.log(arr[which][i], randChance)
       if (arr[which][i] == 'god' && randChance == 1){
         text += this.adjective[Math.round(Math.random() * (this.adjective.length-1 - 0) + 0)] + " "
       }

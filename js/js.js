@@ -63,3 +63,8 @@ for (let i in game.groups){
     }
   }
 }
+
+
+//delete this later
+game.setRandom()
+game.start()

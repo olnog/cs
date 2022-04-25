@@ -87,10 +87,7 @@ $(document).on('click', '.goHouse', function(e){
 })
 
 $(document).on('click', '#random', function(e){
-  let identity = game.randomIdentity()
-  for (let i in identity ){
-    $("#identity-" + i + "-"+ identity[i]).prop('checked', true)
-  }
+  game.setRandom()
 })
 
 $(document).on('click', '.removeInv', function(e){
@@ -110,28 +107,7 @@ $(document).on('click', '#showLog', function(e){
 })
 
 $(document).on('click', '#start', function(e){
-  let playerIdentity = []
-  for (let i in game.demographics){
-    let bias = $(".identity-" + i + ":checked").val()
-    if (bias == undefined){
-      if (!game.optionalBiases.includes(i)){
-        $("#identityTestError").html ("Sorry. You must fill out: " + i )
-        return
-      }
-      continue
-    }
-    playerIdentity.push(bias)
-  }
-
-  game.yourIdentity = playerIdentity
-  for (let personID in persons){
-    persons[personID].meetPC()
-  }
-  let logMsg = "You are: "
-  for (let i in game.yourIdentity){
-    logMsg += game.biasCaptions.identity[game.yourIdentity[i]] + ", "
-  }
-  game.addLog(logMsg)
+  game.start()
   $("#identityTest").addClass('d-none')
   $("#game").removeClass('d-none')
 })

@@ -188,7 +188,6 @@ class Game{
   }
 
   knock(houseNum){
-    console.log(this.houses.door2door[houseNum])
     if (this.houses.door2door[houseNum] >= 0){
       this.houses.opened[houseNum] = true
     } else {
@@ -236,7 +235,37 @@ class Game{
     let invPos = persons[personID].inventory.asks.indexOf(invType)
     persons[personID].inventory.asks.splice(invPos, 1)
   }
+  setRandom(){
+    let identity = game.randomIdentity()
+    for (let i in identity ){
+      $("#identity-" + i + "-"+ identity[i]).prop('checked', true)
+    }
+  }
 
+  start(){
+    let playerIdentity = []
+    for (let i in game.demographics){
+      let bias = $(".identity-" + i + ":checked").val()
+      if (bias == undefined){
+        if (!game.optionalBiases.includes(i)){
+          $("#identityTestError").html ("Sorry. You must fill out: " + i )
+          return
+        }
+        continue
+      }
+      playerIdentity.push(bias)
+    }
+
+    game.yourIdentity = playerIdentity
+    for (let personID in persons){
+      persons[personID].meetPC()
+    }
+    let logMsg = "You are: "
+    for (let i in game.yourIdentity){
+      logMsg += game.biasCaptions.identity[game.yourIdentity[i]] + ", "
+    }
+    game.addLog(logMsg)
+  }
   loseTime(timeSpent){
     this.time = this.time - timeSpent
     if (this.time <= 0){

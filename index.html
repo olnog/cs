@@ -10,6 +10,9 @@
 
     <title>Christian Soldier </title>
     <style>
+      .bad{
+        color:red;
+      }
       .home{
         background-color:lightblue;
       }
@@ -26,12 +29,11 @@
       }
       #status{
           background-color:grey;
-          color:white;
       }
     </style>
   </head>
     <body>
-      <div id='identityTest'>
+      <div id='identityTest' class='d-none'>
         <div>Please fill out your preferred identity: </div>
         <div id='identityTestContent'></div>
         <div>
@@ -39,7 +41,7 @@
           <div><button id='random' class='form-control btn-info'>Random</button></div>
           <div><button id='start' class='form-control btn-outline-success'>Play</button></div>
         </div>
-      </div><div id='game' class='d-none'>
+      </div><div id='game' class=''>
         <div class='text-center row mt-5'>
           <div class='col text-center'>
             Day #<span id='dayNum'></span>

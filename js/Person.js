@@ -131,7 +131,6 @@ class Person{
       status = "They agreed with you on this, so you gained " + Math.abs(theirPosition) + " trust"
     } else {
       this.bigDislike()
-
       status = "They disagreed with you on this, so you lost 1 trust with them"
     }
     return status
