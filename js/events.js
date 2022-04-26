@@ -29,13 +29,25 @@ $(document).on('click', '.addInv', function(e){
   ui.displayPerson(e.target.id.split('-')[4])
 })
 
+$(document).on('click', '#addSermonTopic', function(e){
+  ui.displaySermonTopics()
 
-$(document).on('click', '.back', function(e){
-  $('.screens').addClass('d-none')
-  $("#map").removeClass('d-none')
-  ui.displayMap(game.maxX, game.maxY)
 })
 
+$(document).on('click', '.addTopic', function(e){
+  game.addTopic(e.target.id.split('-')[1], e.target.id.split('-')[2])
+  ui.displayHome()
+  ui.displaySermonTopics()
+})
+
+$(document).on('click', '.backHouse', function(e){
+  ui.displayHouse()
+})
+
+$(document).on('click', '.backHome', function(e){
+  game.backHome()
+  ui.displayHome()
+})
 $(document).on('click', '#buySong', function(e){
   if (game.money < 100){
     return
@@ -44,8 +56,12 @@ $(document).on('click', '#buySong', function(e){
   ui.displayHome()
 })
 
+$(document).on('click', '#conductSermon', function(e){
+  game.conductSermon()
+  ui.displayChurch()
+})
+
 $(document).on('click', '.confirmStory', function(e){
-  console.log('hello2')
   persons[e.target.id.split('-')[1]].youConfirm()
   ui.displayPerson(e.target.id.split('-')[1])
 })
@@ -59,11 +75,21 @@ $(document).on('click', '#doIt', function(e){
   $("#toText").val(html)
 })
 
+$(document).on('click', '#hitTheStreets', function(e){
+  game.hitTheStreets()
+  ui.displayHouse()
+})
+
 $(document).on('click', '.interact', function(e){
   persons[e.target.id.split('-')[4]]
     .youInteract(e.target.id.split('-')[1], e.target.id.split('-')[2],
     e.target.id.split('-')[3])
   ui.displayPerson(e.target.id.split('-')[4])
+})
+
+$(document).on('click', '#nextDoor', function(e){
+  game.nextDoor()
+  ui.displayHouse(game.houses.visited.length-1)
 })
 
 $(document).on('click', '.showInventory', function(e){
@@ -106,6 +132,11 @@ $(document).on('click', '#showLog', function(e){
   $("#log").removeClass('d-none')
 })
 
+$(document).on('click', '.singSong', function(e){
+  game.singSong(e.target.id.split('-')[1])
+  ui.displayChurch()
+})
+
 $(document).on('click', '#skipDay', function(e){
   game.day()
 })
@@ -123,9 +154,37 @@ $(document).on('click', '#start', function(e){
   $("#game").removeClass('d-none')
 })
 
+$(document).on('click', '.workSermon', function(e){
+  if (game.automatingWork == null){
+    ui.status("You start working on the " + e.target.id.split('-')[1]
+      + " of your sermon for this Sunday. " )
+    $(".workSermon").prop('disabled', true)
+    $("#" + e.target.id).prop('disabled', false)
+    $("#" + e.target.id).removeClass('btn-outline-primary')
+    $("#" + e.target.id).addClass('btn-danger')
+    game.automatingWork = setInterval(function(){
+      game.workSermon(e.target.id.split('-')[1])
+      if (game.time < .1 || game.sermon.quality.value >= 10
+          || game.sermon.duration.value >= 2){
+        game.stopAutomation()
+      }
+      ui.refresh()
+      ui.displayHome()
+    }, 2000)
+    return
+  }
+  game.stopAutomation()
+
+})
+
+
 $(document).on('click', '.space', function(e){
   ui.refresh()
 })
-$(document).on('click', 'button', function(e){
+$(document).on('click', "button:not(.workSermon)", function(e){
+  if (game.automatingWork != null){
+    game.stopAutomation()
+  }
+
   ui.refresh()
 })

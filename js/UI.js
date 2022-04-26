@@ -9,8 +9,6 @@ class UI {
   constructor(maxX, maxY){
     this.maxX = maxX
     this.maxY = maxY
-    this.displayMap()
-    this.refresh()
   }
 
 
@@ -41,19 +39,34 @@ class UI {
   displayChurch(){
     $(".screens").addClass('d-none')
     $("#church").removeClass('d-none')
+    $("#churchDuration").html(game.church.duration)
     $("#skip").addClass('d-none')
     $("#numOfAttending").html(game.church.attending.length)
     $("#maxAttending").html(game.church.maxAttending)
     let html = ""
     for (let i in game.church.attending){
-      html += "<div>" + persons[game.church.attending[i]].fetchName() + "</div>"
+      html += "<div>" + persons[game.church.attending[i]].fetchName() + " ("
+      + game.church.reaction[game.church.attending[i]] + ")</div>"
     }
     $("#congregation").html(html)
+    html = ""
+    for (let i in game.church.songs){
+      let disabledClass = ''
+      if (game.church.songs[i].sungAtService){
+        disabledClass = ' disabled '
+      }
+      html += "<button id='singSong-" + i + "' class='btn btn-secondary ms-3 singSong"
+        + disabledClass + "'>sing '" + game.church.songs[i].name + "'</button>"
+    }
+
+    $("#churchSongs").html(html)
+    if (game.sermon.delivered){
+      $("#conductSermon").addClass('d-none')
+    }
   }
 
   displayChurchAttendees(){
     $("#comingToChurch").addClass('d-none')
-    console.log(game.social.comingToService)
     if (game.social.comingToService.length > 0){
       $("#comingToChurch").removeClass('d-none')
       for (let i in game.social.comingToService){
@@ -64,25 +77,39 @@ class UI {
       $(".comingToChurchContent").html(html)
     }
   }
+
   displayHome(){
+    $(".screens").addClass('d-none')
     $("#home").removeClass('d-none')
     $("#buySong").prop('disabled', false)
-
     if (game.money < 100){
       $("#buySong").prop('disabled', true)
     }
     let html = ""
-    for (let i in game.songs){
-      html += "<div>" + game.songs[i] + "</div>"
+    for (let i in game.church.songs){
+      html += "<div>" + game.church.songs[i].name + "</div>"
     }
     $("#songList").html(html)
+    $("#sermonQualityProgress").css('width', (game.sermon.quality.value * 10) + "%")
+    $("#sermonQualityWorkProgress").css('width', (game.sermon.quality.work / game.sermon.quality.value * 100) + "%")
+    $("#sermonDurationWorkProgress").css('width', (game.sermon.duration.work / game.sermon.duration.value * 100) + "%")
+    $("#sermonDuration").html(game.sermon.duration.value.toFixed(1))
+    $("#maxNumOfTopics").html(game.sermon.topics.maxNum)
+    $("#numOfTopics").html(game.sermon.topics.bias.length)
+    html = ""
+    for(let i in game.sermon.topics.bias){
+      html += "<div>" + game.biasCaptions.people[game.sermon.topics.bias[i]]
+        + " are " + game.sermon.topics.orientation[i] + "</div>"
+    }
+    $("#topicsIncludedInSermon").html(html)
   }
 
-  displayHouse(houseNum){
+  displayHouse(){
+    let houseNum = game.currentlyAt
+    $(".screens").addClass('d-none')
     $("#house").removeClass('d-none')
-
     let html = ""
-    $(".houseNum").html(houseNum)
+    $("#address").html(game.houses.street[houseNum].number + " " + game.houses.street[houseNum].name)
     $("#houseVisits").html(game.houses.visited[houseNum])
     $("#noAnswer").addClass('d-none')
     $(".knock").attr('id', 'knock-' + houseNum)
@@ -196,6 +223,14 @@ class UI {
     $(".goHouse").attr ('id', "goHouse-" + persons[personID].house)
     $(".screens").addClass('d-none')
     $("#person").removeClass('d-none')
+    $(".personOrientation").addClass('d-none')
+    if (persons[personID].house == game.currentlyAt){
+      $("#personAtAddress").removeClass('d-none')
+      $("#personAddress").html(game.houses.street[persons[personID].house].number + " "
+        + game.houses.street[persons[personID].house].name)
+    } else {
+      $(".personAtHome").removeClass('d-none')
+    }
     let characterization = persons[personID].characterize(personID)
     let html = ""
     for (let i in characterization ){
@@ -249,6 +284,24 @@ class UI {
       }
     }
     $("#personKnownBiases").html(html)
+  }
+
+  displaySermonTopics(){
+    let html = ""
+    for (let i in game.biasCaptions.people){
+      if (game.sermon.topics.bias.includes(i)){
+        continue
+      }
+      html += "<div class='fw-bold'>"  + game.biasCaptions.people[i]
+        + "</div><div class='mb-1'>"
+        +"<button id='addTopic-" + i
+        + "-bad' class='addTopic btn btn-danger m-1'>"
+        + game.biasCaptions.people[i] + " are bad</button>"
+        + "<button id='addTopic-" + i
+        + "-good' class='addTopic btn btn-success m-1'>"
+        + game.biasCaptions.people[i] + " are good</button></div>"
+    }
+    $("#sermonTopics").html(html)
   }
 
   displayTest(){

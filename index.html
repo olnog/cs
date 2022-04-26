@@ -53,27 +53,120 @@
           </div>
         </div>
         <div id='status' class='text-center fixed-top'>&nbsp;</div>
+
+
+
       <div id='mainScreen'>
-        <div id='church' class='screens'>
+        <div id='church' class='screens d-none'>
           <div class='text-center fw-bold'>Church Services</div>
-          <div class='text-center'>
-            <span id='numOfAttending'></span>/<span id='maxAttending'></span>
+          <div class='row'>
+            <div class='col text-center'>
+              Hosted: At Home
+              (<span id='numOfAttending'></span>/<span id='maxAttending'></span>)
+            </div><div class='col text-center'>
+              Duration:
+              <psan id='churchDuration'></span>h
+            </div>
+          </div>
+          <div id='doChurch' class='text-center'>
+            <button id='conductSermon' class='btn btn-primary'>
+              Conduct Sermon
+            </button>
+          </div><div class='fw-bold mt-3'>
+            Sing Hymn
+          </div><div id='churchSongs'>
+
+          </div><div class='mt-3 fw-bold'>
+            Attendees:
           </div>
           <div id='congregation'></div>
-        </div><div id='home' class='screens'>
+
+
+
+        </div><div id='home' class='screens d-none'>
           <div class='text-center'>You're home now.</div>
-          <div>What do you wanna do?</div>
-          <div class='ps-3'><button id='buySong' class='btn btn-outline-danger'>buy song for service [-$100]</button></div>
-          <div class='fw-bold mt-3'>Songs:</div>
-          <div id='songList' class='ms-3'></div>
+          <div>
+            <button id='hitTheStreets' class='btn btn-outline-warning form-control'>
+              go out and spread The Word
+            </button>
+          </div>
+          <div class='row'>
+            <div class='col'>
+              <div class='fw-bold text-center'>Songs</div>
+              <div class='text-center'>
+                <button id='buySong' class='btn btn-outline-danger'>
+                  buy song for service [-$100]
+                </button>
+              </div>
+              <div id='songList' class='ms-3 text-center'></div>
+            </div><div class='col'>
+              <div class='text-center fw-bold'>
+                Sermon
+              </div><div>
+                Duration: <span id='sermonDuration'>.2</span> hours
+                <button id='workSermon-duration' class='workSermon btn btn-outline-primary form-control'>
+                  work on Sermon duration
+                </button>
+                <div class='progress'>
+                  <div id='sermonDurationWorkProgress' class="progress-bar progress-bar-striped" role="progressbar"
+                    style="width: 10%" aria-valuenow="1" aria-valuemin="1"
+                    aria-valuemax="10"></div>
+                </div>
+              </div><div>
+                Quality:
+                <div class="progress">
+                  <div id='sermonQualityProgress' class="progress-bar bg-success" role="progressbar"
+                    style="width: 10%" aria-valuenow="1" aria-valuemin="1"
+                    aria-valuemax="10"></div>
+                  </div>
+                  <button id='workSermon-quality' class='workSermon btn btn-outline-primary form-control'>
+                    work on Sermon quality
+                  </button>
+                  <div class='progress'>
+                    <div id='sermonQualityWorkProgress' class="progress-bar progress-bar-striped" role="progressbar"
+                      style="width: 10%" aria-valuenow="1" aria-valuemin="1"
+                      aria-valuemax="10"></div>
+                  </div>
+                </div><div class='fw-bold'>
+                  Topics (<span id='numOfTopics'>
+                  </span>/<span id='maxNumOfTopics'></span>):
+                </div><div id='topicsIncludedInSermon'>
+                </div><div id='sermonTopics'>
+                  <button id='addSermonTopic' class='btn btn-outline-secondary form-control'>add topic</button>
+                </div>
+            </div>
+          </div>
+          <div class='mt-5 pt-5'>
+            <div id='skip' class='row'>
+              <div class='col'>
+                <button id='skipDay' class='form-control btn btn-warning'>skip to next day</button>
+              </div><div class='col'>
+                <button id='skipSunday' class='form-control btn btn-warning'>skip to Sunday</button>
+              </div>`
+            </div><div class='row'>
+              <button id='showLog' class='form-control btn btn-outline-dark'>log</button>
+            </div>
+          </div>
 
-        </div><div id='map' class='screens text-center'>
+
+
+
+        </div><div id='map' class='screens text-center d-none'>
           <div id='mapDisplay'></div>
-        </div><div id='house' class='screens d-none' >
-          <button class='back btn-outline-warning btn'>back</button>
 
-          <div>You're at house #<span class='houseNum'></span></div>
-          <div>You've visited this house  <span id='houseVisits'></span> times.</div>
+
+
+        </div><div id='house' class='screens d-none' >
+          <div class='text-center'>You're at <span id='address'></span></div>
+
+          <div class='row'>
+            <div class='col'>
+              <button id='' class='backHome btn btn-outline-primary form-control'>back home</button>
+            </div><div class='col'>
+              <button id='nextDoor' class='btn btn-outline-warning form-control'>head next door</button>
+            </div>
+          </div>
+          <div class='mt-3'>You've visited this house  <span id='houseVisits'></span> times.</div>
           <div id='noAnswer' class='d-none'> You knocked but they're not coming to the door today, I guess.</div>
           <div id='houseNew'> <button id='' class='knock btn btn-outline-dark'>knock</button> </div>
           <div id='houseOpened'>
@@ -88,12 +181,18 @@
         </div>
 
 
+
         <div id='person' class='screens d-none' >
           <div id='personContent'>
-
-            <div>
+            <div class='text-center'>
+              <div id='personAtAddress' class='personOrientation personAtAddress'>You're at <span id='personAddress'></span>.</div>
+              <div id='personAtHome' class='personOrientation personAtHome'>You're at home.</div>
+            </div><div>
+              <button id='personBackHome' class='personOrientation personAtAddress backHouse btn btn-outline-warning form-control'>other people at this house</button>
+              <button id='headToPersonHouse' class='personOrientation personAtHome eadToPersonHouse btn
+                btn-outline-warning form-control'>head to their house</button>
+            </div><div>
               <span class='personAbout fw-bold'></span>
-              <button id='' class='goHouse btn btn-outline-warning'>leave</button>
             </div>
             <div class=''>This persons appears to be:</div>
             <div class='personCharacterization'></div>
@@ -116,27 +215,17 @@
               <div id='inventoryOptions'></div>
             </div>
           </div>
-        </div><div class='fixed-bottom'>
-          <div id='skip' class='row'>
-            <div class='col'>
-              <button id='skipDay' class='form-control btn btn-warning'>skip to next day</button>
-            </div><div class='col'>
-              <button id='skipSunday' class='form-control btn btn-warning'>skip to Sunday</button>
-            </div>`
-          </div><div class='row'>
-            <button id='showLog' class='form-control btn btn-outline-dark'>log</button>
-          </div>
         </div>
+
+
+
       </div><div id='log' class='d-none screens'>
         <button class='btn btn-outline-secondary back'>back</button>
-
         <div id='comingToChurch'>
           <div class='fw-bold'>
             Who's Coming To Church This Sunday?
           </div><div class='comingToChurchContent'>
-
           </div>
-
         </div>
         <div id='logContent'></div>
       </div>
@@ -144,11 +233,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src='https://code.jquery.com/jquery-3.6.0.js'></script>
     <script src='js/UI.js'></script>
-    <script src='js/Name.js'></script>
+    <script src='js/Namer.js'></script>
     <script src='js/Song.js'></script>
     <script src='js/Story.js'></script>
     <script src='js/Person.js'></script>
-    <script src='js/Relationship.js'></script>
 
     <script src='js/Game.js'></script>
     <script src='js/events.js'></script>

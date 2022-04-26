@@ -26,7 +26,7 @@ class Song{
         text += this.adjective[Math.round(Math.random() * (this.adjective.length-1 - 0) + 0)] + " "
       }
       text += this[arr[which][i]][Math.round(Math.random() * (this[arr[which][i]].length-1 - 0) + 0)] + " "
-    }
+    }    
     return text
   }
 }

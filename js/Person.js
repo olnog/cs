@@ -2,6 +2,14 @@ class Person{
   biases = {
 
   }
+  church = {
+    feelAboutSong: [],
+    sermon: {
+      durationMin: null,
+      durationMax: null,
+      quality: null,
+    }
+  }
   group = null
   house = null
   id = null
@@ -57,7 +65,9 @@ class Person{
   }
 
   constructor(houseNum){
-
+    this.church.sermon.durationMin = (Math.round(Math.random() * (10 - 2) + 2) / 10).toFixed(1);
+    this.church.sermon.durationMax = (Math.round(Math.random() * (20 - 12) + 12) / 10).toFixed(1)
+    this.church.sermon.quality = Math.round(Math.random() * (5 - 0) + 0)
     this.house = houseNum
     for (let i in game.biases){
       let genOrient = Math.round(Math.random() * (1 - -1) + -1)
@@ -70,7 +80,7 @@ class Person{
       this.you.biasChecks.num[game.biases[i]] = 0
     }
     this.createIdentity()
-    let theirName = personName.fetchRandom(this.identity[2])
+    let theirName = namer.fetchRandom(this.identity[2])
     this.name = theirName.name
     this.surname = theirName.surname
     this.group = Math.round(Math.random() * (game.numOfGroups - 1) + 1)

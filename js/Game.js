@@ -1,4 +1,5 @@
 class Game{
+  automatingWork = null
   maxX = 8
   maxY = 8
   asks = ['askDonation', 'askRefer', 'askService' ]
@@ -61,8 +62,10 @@ class Game{
   }
   church = {
     attending: [],
+    duration: 0,
     maxAttending: 10,
     songs: [],
+    reaction: [],
   }
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
   dayNum = 1
@@ -83,28 +86,50 @@ class Game{
   houses = {
     x: [],
     y: [],
+    distance: [],
     door2door: [],
     knockedToday: [],
     occupants: [],
     opened: [],
+    street: [],
     visited: [],
   }
-
-
   livingAt = null
   log = []
   maxInventorySize = 7
   money = 0
   numOfGroups = 10
   optionalBiases = ['psych', 'substance', 'disability', 'citizenship']
+  sermon = {
+    delivered: false,
+    duration: {
 
+      value: .2, //default .2
+      work: 0,
+    },
+    quality: {
+
+      value: 1, //default 1
+      work: 0,
+    },
+    topics: {
+      bias: [],
+      orientation: [],
+      maxNum: 4,
+    }
+  }
+  street = {
+    distance: null,
+    name: null,
+    number: null,
+
+  }
   time = 8
   yourIdentity = []
 
 
 
   constructor(){
-    this.church.songs.push(song.random())
     for (let i = 1; i < this.numOfGroups + 1; i++){
       this.groups[i] = []
     }
@@ -150,6 +175,84 @@ class Game{
     this.log.push(msg)
   }
 
+  addTopic(biasName, orientation){
+    if (this.sermon.topics.bias.length >= this.sermon.topics.maxNum){
+      ui.status("That's as many topics as you can put in a sermon.")
+      return
+    } else if (this.sermon.topics.bias.includes(biasName)){
+      ui.status("You're already talking about this topic in your sermon.")
+      return
+    }
+    this.sermon.topics.bias.push(biasName)
+    this.sermon.topics.orientation.push(orientation)
+    ui.status ("In your sermon, you write about how "
+      + this.biasCaptions.people[biasName] + " are " + orientation + ".")
+      this.loseTime(.1)
+  }
+
+  backHome(){
+    this.street.name = null
+    this.street.number = null
+    ui.status("It took " + this.street.distance + "h to head back home.")
+    this.street.distance = null
+
+  }
+
+  churchTime(){
+    this.church.duration += .1
+  }
+
+  conductSermon(){
+    for (let i in this.church.attending){
+      let personID = this.church.attending[i]
+      let sermonPref = persons[personID].church.sermon
+      if (this.sermon.duration.value >= sermonPref.durationMin
+        && this.sermon.duration.value <= sermonPref.durationMin){
+        this.church.reaction[personID] ++
+      } else if (this.sermon.duration.value < sermonPref.durationMin){
+        this.church.reaction[personID]--
+        game.addLog(persons[personID].fetchName()
+          + " didn't like how short the sermon was. (" + this.sermon.duration.value
+          + "h)")
+      } else if (this.sermon.duration.value > sermonPref.durationMax){
+        this.church.reaction[personID]--
+        game.addLog(persons[personID].fetchName()
+          + " didn't like how long the sermon was. (" + this.sermon.duration.value
+          + "h)")
+      }
+      if (this.sermon.quality.value >= sermonPref.quality){
+        this.church.reaction[personID] ++
+      } else if (this.sermon.quality.value < sermonPref.quality){
+        this.church.reaction[personID] --
+        game.addLog(persons[personID].fetchName()
+          + " thought your sermon was boring and unoriginal.")
+      }
+      console.log(this.sermon.topics.bias)
+      for (let n in this.sermon.topics.bias){
+        let theirOrientation = null
+        if (persons[personID].biases[this.sermon.topics.bias[n]] == 0){
+          continue
+        } else if (persons[personID].biases[this.sermon.topics.bias[n]] > 0){
+          theirOrientation = 'good'
+        } else if (persons[personID].biases[this.sermon.topics.bias[n]] < 0){
+          theirOrientation = 'bad'
+        }
+        if (this.sermon.topics.orientation[n] == theirOrientation){
+          this.church.reaction[personID] += Math.abs(persons[personID].biases[this.sermon.topics.bias[n]])
+        } else if (this.sermon.topics.orientation[n] == theirOrientation){
+          this.church.reaction[personID] -= Math.abs(persons[personID].biases[this.sermon.topics.bias[n]])
+          ui.status ("They really didn't like what you had to say about "
+            + this.biasCaptions.people[this.sermon.topics.bias[n]] + " ("
+            + this.sermon.topics.orientation[n] + ")")
+        }
+      }
+
+
+    }
+    this.sermon.delivered = true
+    ui.status ("You deliver the sermon that you've been working on all week.")
+  }
+
   day(){
     this.time = 8
     let status = "Day #" + this.dayNum + " ended."
@@ -187,7 +290,22 @@ class Game{
     this.currentlyAt = houseNum
     this.houses.visited[houseNum]++
     this.loseTime(timeSpent)
+  }
 
+  hitTheStreets(){
+    this.street.name = namer.fetchRandomStreet()
+    this.street.number =  Math.round(Math.random() * (9999 - 100) + 100)
+    let timeCost = Math.round(Math.random() * (5 - 2) + 2) / 10
+    this.street.distance = timeCost
+    this.loseTime(timeCost)
+    ui.status("You head out. It took " + timeCost + "h to get to this house on " + this.street.number + " " + this.street.name)
+    this.newHouse()
+    this.currentlyAt = this.houses.opened.length - 1
+  }
+
+  joinChurch(personID){
+    game.church.attending.push(personID)
+    game.church.reaction[personID] = 0
   }
 
   knock(houseNum){
@@ -212,10 +330,38 @@ class Game{
     }
   }
 
+  nextDoor(){
+    this.street.number++
+    this.street.distance = Number(this.street.distance + .1).toFixed(1)
+    this.newHouse()
+    ui.status("")
+    this.currentlyAt = this.houses.opened.length - 1
+    this.loseTime(.1)
+  }
+
+  newHouse(){
+    let door2doorBias = 0
+    let householdSize = Math.round(Math.random() * (5 + 1) + 1)
+    let occupantsArr = []
+    for (let i = 1; i <= householdSize; i++){
+      persons.push(new Person(this.houses.opened.length))
+      door2doorBias += persons[persons.length-1].biases.door2door
+      persons[persons.length-1].id = persons.length-1
+      occupantsArr.push(persons.length-1)
+    }
+    this.houses.street.push({name: this.street.name, number: this.street.number})
+    this.houses.occupants.push(occupantsArr)
+    this.houses.distance.push( this.street.distance)
+    this.houses.door2door.push(Math.round(door2doorBias / householdSize))
+    this.houses.knockedToday.push(0)
+    this.houses.opened.push(false)
+    this.houses.visited.push(0)
+  }
+
   randomIdentity(){
     let myIdentity = {}
-    for (let category in game.demographics){
-      let categoryArr = game.demographics[category]
+    for (let category in this.demographics){
+      let categoryArr = this.demographics[category]
       let shouldTheyAssign = true
       if (this.optionalBiases.includes(category)){
         shouldTheyAssign = Math.round(Math.random() * (8 + 1) - 1) == 1
@@ -238,8 +384,9 @@ class Game{
     let invPos = persons[personID].inventory.asks.indexOf(invType)
     persons[personID].inventory.asks.splice(invPos, 1)
   }
+
   setRandom(){
-    let identity = game.randomIdentity()
+    let identity = this.randomIdentity()
     for (let i in identity ){
       $("#identity-" + i + "-"+ identity[i]).prop('checked', true)
     }
@@ -247,10 +394,10 @@ class Game{
 
   start(){
     let playerIdentity = []
-    for (let i in game.demographics){
+    for (let i in this.demographics){
       let bias = $(".identity-" + i + ":checked").val()
       if (bias == undefined){
-        if (!game.optionalBiases.includes(i)){
+        if (!this.optionalBiases.includes(i)){
           $("#identityTestError").html ("Sorry. You must fill out: " + i )
           return
         }
@@ -259,15 +406,15 @@ class Game{
       playerIdentity.push(bias)
     }
 
-    game.yourIdentity = playerIdentity
+    this.yourIdentity = playerIdentity
     for (let personID in persons){
       persons[personID].meetPC()
     }
     let logMsg = "You are: "
-    for (let i in game.yourIdentity){
-      logMsg += game.biasCaptions.identity[game.yourIdentity[i]] + ", "
+    for (let i in this.yourIdentity){
+      logMsg += this.biasCaptions.identity[this.yourIdentity[i]] + ", "
     }
-    game.addLog(logMsg)
+    this.addLog(logMsg)
   }
 
 
@@ -278,15 +425,63 @@ class Game{
     }
   }
 
+  newSong(){
+    this.church.songs.push({
+      name: song.random(), sungAtService: false,
+    })
+    for (let personID in persons){
+      let align = Math.round(Math.random() * (1 - -1) + -1)
+      if (align == 1 ){
+        align += Math.round(Math.random() * (1 - 0) + 0)
+      }
+      persons[personID].church.feelAboutSong[this.church.songs.length-1] = align
+    }
+
+  }
+
+  singSong(songID){
+    if (this.church.songs[songID].sungAtService || this.whichDay() != 6){
+      return
+    }
+    this.church.songs[songID].sungAtService = true
+    for (let i in this.church.attending){
+      let personID = this.church.attending[i]
+      this.church.reaction[personID] += persons[personID].church.feelAboutSong[songID]
+    }
+    ui.status("You lead the congregation in a rendition of '" + this.church.songs[songID].name + "'")
+    this.churchTime()
+  }
+
   startService(){
-    
+
+  }
+
+  stopAutomation(){
+    clearInterval(this.automatingWork)
+    this.automatingWork = null
+    $(".workSermon").prop('disabled', false)
+    $(".workSermon").removeClass('btn-danger')
+    $(".workSermon").addClass('btn-outline-primary')
   }
 
   whichDay(){
-    let whichDay = (game.dayNum % 7) - 1
+    let whichDay = (this.dayNum % 7) - 1
     if (whichDay == -1){
       whichDay = 6
     }
     return whichDay
+  }
+
+  workSermon(workType){
+    this.sermon[workType].work += .1
+    if (this.sermon[workType].work > this.sermon[workType].value){
+      if (workType == 'quality'){
+        this.sermon[workType].value++
+      } else if (workType == 'duration'){
+        this.sermon[workType].value += .1
+      }
+      this.sermon[workType].work = 0
+    }
+    this.loseTime(.1)
   }
 }
