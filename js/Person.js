@@ -490,16 +490,36 @@ class Person{
   }
 
   youAsk(interactionType){
+    let interactArr = {
+      askService  : " come to service ",
+      askDonation : " be willing to donate ",
+      askRefer    : " be willing to refer you to one of their friends ",
+    }
     if (game.askCost[interactionType] > this.you.trust){
-      ui.status("You don't have enough trust with this person to do this.")
-      return
+      //ui.status("You don't have enough trust with this person to do this.")
+      //return
     }
     game.loseTime(.1)
 
     let status = ''
     this.you.maxTrust -= game.askCost[interactionType]
     this.you.trust -= game.askCost[interactionType]
+    if (this.you.maxTrust < 0){
+      this.you.maxTrust = 0
+    }
+    if (this.you.trust < 0){
+      this.you.trust = 0
+    }
+    let chance = Math.round(Math.random() * (100 - 1) + 1)
+    let interactChance = (this.you.trust / game.askCost[interactionType]) * 100
+
+    if (chance > interactChance){
+      ui.status("You hoped they would " + interactArr[interactionType] + " but they say no.")
+      return
+    }
+
     if (interactionType == 'askService'){
+
       status = " they are coming to your service this Sunday."
       game.addLog(this.name +  " " + this.surname + " is now coming to Service this Sunday.")
       this.you.comingToService = true

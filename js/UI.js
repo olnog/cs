@@ -1,8 +1,8 @@
 class UI {
   captionArr = {
-    'askService': "ask them if they'll come to service [-10]",
-    'askRefer': "ask them if they have anyone else you can talk to [-5]",
-    'askDonation': "ask them for a donation [-25]",
+    'askService': "ask them if they'll come to service",
+    'askRefer': "ask them if they have anyone else you can talk to",
+    'askDonation': "ask them for a donation",
   }
   maxX = null
   maxY = null
@@ -19,9 +19,10 @@ class UI {
       if (persons[personID].trust < game.askCost[game.asks[i]]){
         disabledClass = ' disabled '
       }
+      let chance = persons[personID].you.trust / game.askCost[game.asks[i]] * 100
       html += "<button id='interact-" + game.asks[i]
           + "-0-0-" + personID + "' class='m-3 interact btn btn-info " + disabledClass + "'>"
-          + this.captionArr[game.asks[i]] + "</button>"
+          + this.captionArr[game.asks[i]] + " (" + chance +  "%) </button>"
     }
     return html
   }
@@ -225,7 +226,7 @@ class UI {
     $("#person").removeClass('d-none')
     $(".personOrientation").addClass('d-none')
     if (persons[personID].house == game.currentlyAt){
-      $("#personAtAddress").removeClass('d-none')
+      $(".personAtAddress").removeClass('d-none')
       $("#personAddress").html(game.houses.street[persons[personID].house].number + " "
         + game.houses.street[persons[personID].house].name)
     } else {
